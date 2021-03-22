@@ -3,7 +3,6 @@ import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Simulates a synchronous distributed system and implements LubyMIS algorithm using multi threading
@@ -17,6 +16,7 @@ public class Luby {
     static Map<String, Boolean> isIndependentMap = new HashMap<>();
     static CyclicBarrier gate = null;
     static int rounds = 0;
+    static int n = 0;
 
     /**
      * Simulates the work done by a process node. Here, every process has its own thread
@@ -26,7 +26,7 @@ public class Luby {
         private final List<Integer> neighbors;
         int roundCount = 0;
 
-        ProcessNode(int i, int n, int pid, List<Integer> neighbors) {
+        ProcessNode(int pid, List<Integer> neighbors) {
 
             int randomId = new Random().nextInt((int) Math.pow(n, 4)); // Assign a random id
             randomIdsMap.put(Integer.toString(pid), randomId);
@@ -49,7 +49,13 @@ public class Luby {
                 String currentThread = Thread.currentThread().getName();
 
                 while(isCandidateMap.get(currentThread)) {
-                    //Thread.sleep(4000);
+
+                    int randomId = new Random().nextInt((int) Math.pow(n, 4)); // Assign a random id
+                    randomIdsMap.put(Thread.currentThread().getName(), randomId);
+                    System.out.println("Current process id: " + Thread.currentThread().getName() + "; Randomly assigned id: " + randomId);
+
+                    // This is done to maintain a synchronous network
+                    Thread.sleep(2000); // Wait for other processes to assign a random id
 
                     int currId = randomIdsMap.get(currentThread);
                     boolean isMax = true;
@@ -62,7 +68,7 @@ public class Luby {
                     }
 
                     // This is done to maintain a synchronous network
-                    Thread.sleep(4000); // Wait for other processes to find leaders in their neighborhoods
+                    Thread.sleep(2000); // Wait for other processes to find leaders in their neighborhoods
 
                     if(isMax) { // Current node has max id among all its neighbors
                         isIndependentMap.put(currentThread, true); // Put the current node in MIS
@@ -71,8 +77,11 @@ public class Luby {
                             isCandidateMap.put(Integer.toString(neighbor), false);
                         }
                     }
-                    System.out.println("Current executing process id: " + currentThread);
+
                     roundCount++;
+
+                    // This is done to maintain a synchronous network
+                    Thread.sleep(2000); // Wait for other processes to update their candidacy for next round
                 }
             } catch (InterruptedException | BrokenBarrierException e) {
                 e.printStackTrace();
@@ -102,21 +111,33 @@ public class Luby {
 
     /**
      * Verifies if the MIS constructed is indeed correct
-     * @param n Total number of processes
      * @param ids Ids corresponding to each process
      * @param misSet Set containing MIS process ids
      * @param processNeighbors Contains a list of neighboring process ids for each process
      */
-    private static void verifyMIS(int n, int[] ids, Set<Integer> misSet, List<List<Integer>> processNeighbors) {
+    private static void verifyMIS(int[] ids, Set<Integer> misSet, List<List<Integer>> processNeighbors) {
 
         System.out.println("Verifying the MIS constructed is correct...");
+        Set<Integer> checkMISSet = new HashSet<>();
         for(int i=0; i<n; i++) {
             for(int j=0; j<processNeighbors.get(i).size(); j++) {
+
+                // Check if neighbors added in MIS
                 if(misSet.contains(ids[i]) && misSet.contains(processNeighbors.get(i).get(j))) {
                     System.out.println("THE MIS CONSTRUCTED IS NOT CORRECT....EXITING PROGRAM...");
                     System.exit(1);
                 }
+
+                // checkMISSet is used to make sure that all nodes have been considered for MIS
+                if(misSet.contains(ids[i])) {
+                    checkMISSet.add(ids[i]);
+                    checkMISSet.add(processNeighbors.get(i).get(j));
+                }
             }
+        }
+        if(checkMISSet.size() != n) {
+            System.out.println("THE MIS CONSTRUCTED IS NOT CORRECT....EXITING PROGRAM...");
+            System.exit(1);
         }
         System.out.println("Verified that the MIS constructed is indeed correct!");
     }
@@ -137,7 +158,7 @@ public class Luby {
             System.exit(1);
         }
 
-        int n = sc.nextInt(); // Total processes
+        n = sc.nextInt(); // Total processes
 
         // Every process is identified through the provided id
         // This id is not used for comparison though, it's just used for identification
@@ -158,7 +179,7 @@ public class Luby {
             }
 
             // Create a new instance of a process node
-            processNodes[i] = new Luby.ProcessNode(i, n, ids[i], currentProcessNeighbors);
+            processNodes[i] = new Luby.ProcessNode(ids[i], currentProcessNeighbors);
             processNeighbors.add(currentProcessNeighbors);
         }
 
@@ -188,6 +209,6 @@ public class Luby {
 
         Set<Integer> misSet = printMIS(); // Prints processes in the MIS
 
-        verifyMIS(n, ids, misSet, processNeighbors); // Verify correctness of the MIS
+        verifyMIS(ids, misSet, processNeighbors); // Verify correctness of the MIS
     }
 }
