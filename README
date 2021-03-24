@@ -1,0 +1,13 @@
+To implement the Luby's MIS algorithm, we have created a Luby.java file. To compile and run the Luby.java code, there are following steps that need to be followed -
+
+a) The algorithm will run on csgrads1 server.
+b) Make sure Java 1.8 or any other higher version is installed on the machine.
+c) The code takes one command-line argument i.e. input file. Make sure the input file is in the same directory with the code file.
+d) The input file contains 3 lines -
+   1) n, number of vertices in the graph
+   2) id array; a one-dimensional array of size n
+   3) adjacency matrix (which is a symmetric n by n matrix). 1 represents if the nodes are adjacent to each other and 0 otherwise.
+e) First, to compile Luby.java use command "javac Luby.java".
+f) A Luby.class file will be created in the same directory after compiling the java file.
+g) Now, to run the above code, use command "java Luby inputfile" e.g. java Luby input1.txt
+h) An output file will be created in the same directory which contains the rounds (rounds took to generate the MIS), resultant MIS set and a verification message whether the generated MIS is correct or not.
