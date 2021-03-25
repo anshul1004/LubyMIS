@@ -1,3 +1,20 @@
+Team Members: Anshul Pardhi, Jayita Roy, Ruchi Singh
+
+We have divided the project into several tasks:
+1. Study LubyMIS algorithm: Anshul, Jayita, Ruchi
+2. Study multithreading in Java: Anshul, Jayita, Ruchi
+3. Create input file from graph: Jayita
+4. Implement code to parse input file graph: Jayita
+5. Implement LubyMIS algorithm: Anshul
+6. Implement thread synchronization: Ruchi
+7. Integration of LubyMIS algorithm with thread synchronization: Anshul, Jayita, Ruchi
+8. Implement method to check if the generated MIS is correct: Anshul
+9. Implement code to generate output file to store results: Anshul
+10. Test the code with the same input multiple times: Ruchi
+11. Create multiple graph input files to test the correctness of the implemented algorithm: Jayita
+12. Test the code on new input files, and generate their corresponding output files: Anshul, Ruchi
+13. Documentation (code comments, README): Anshul, Jayita, Ruchi
+
 To implement the Luby's MIS algorithm, we have created a Luby.java file. To compile and run the Luby.java code, there are following steps that need to be followed -
 
 a) The algorithm will run on csgrads1 server.
