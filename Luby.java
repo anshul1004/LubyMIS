@@ -143,9 +143,9 @@ public class Luby {
 
     public static void main(String[] args) {
 
-        // Pass on input file through command line argument
-        if(args.length != 1) {
-            System.err.println("Error: Input file not provided in the argument!");
+        // Pass on input & output file through command line argument
+        if(args.length != 2) {
+            System.err.println("Error: Input and/or output file not provided in the argument!");
             System.exit(1);
         }
 
@@ -212,7 +212,7 @@ public class Luby {
 
         // Write final output to a file
         try {
-            BufferedWriter output = new BufferedWriter(new FileWriter("output.txt"));
+            BufferedWriter output = new BufferedWriter(new FileWriter(args[1]));
 
             output.append("Number of rounds (phases): ").append(String.valueOf(rounds));
             output.newLine();
